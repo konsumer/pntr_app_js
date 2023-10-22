@@ -1,6 +1,6 @@
 # pntr_app_js
 
-This will allow you to make your pntr games in javascript, on the web. It allows a quick way to try out ideas on the web.
+This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app) games in javascript, on the web. It allows a quick way to try out ideas, and you can easily port your game to C later, if you want (for native + web.)
 
 
 ## usage
