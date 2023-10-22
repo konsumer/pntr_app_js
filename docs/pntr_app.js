@@ -1,4 +1,4 @@
-import pntr_wasm from './pntr_app_js_wasm.mjs'
+import pntr_wasm from './pntr_app_web.mjs'
 
 const AsyncFunction = async function () {}.constructor
 
@@ -37,7 +37,10 @@ export async function run(code, canvas, iface={}) {
   }
 
   if (user.init) {
-    await user.init()
+    const r = await user.init()
+    if (r === false) {
+      throw Error('init() returned false.')
+    }
   }
 }
 

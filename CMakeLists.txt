@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
-project(pntr_app_js_wasm
+project(pntr_app_web
     DESCRIPTION "Web host for pntr_app games"
-    HOMEPAGE_URL "https://github.com/konsumer/pntr_app_js"
+    HOMEPAGE_URL "https://github.com/konsumer/pntr_app_web"
     VERSION 0.0.1
     LANGUAGES C
 )

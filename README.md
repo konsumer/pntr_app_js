@@ -1,4 +1,4 @@
-# pntr_app_js
+# pntr_app_web
 
 This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app) games in javascript, on the web. It allows a quick way to try out ideas, and you can easily port your game to C later, if you want (for native + web.)
 
@@ -44,9 +44,9 @@ You don't need to do this yourself in general (output is in docs/) but here is w
 ```
 emcmake cmake -B build
 emmake make -C build
-cp build/pntr_app_js_wasm* docs
+cp build/pntr_app_web* docs
 
-emrun docs/index.html
+npx -y live-server docs
 ```
 
 
