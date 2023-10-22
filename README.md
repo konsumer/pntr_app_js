@@ -1,46 +1,58 @@
-# pntr_app_starter
+# pntr_app_js
 
-A boilerplate starter project for applications using [pntr](https://github.com/RobLoach/pntr) and [pntr_app](https://github.com/RobLoach/pntr_app).
-
-## Getting Started
-
-1. Open up [CMakeLists.txt](CMakeLists.txt) and rename the project name from "pntr_app_starter" to your own application name.
-
-    ``` cmake
-    project(MyGame
-        DESCRIPTION "My Game"
-        VERSION 0.0.1
-        LANGUAGES C
-    )
-    ```
-
-2. Edit [main.c](src/main.c) as much as you'd like
-
-## Build
-
-The build process uses [CMake](https://cmake.org/).
-
-A package.json is included (even though it's not a node project) to quickly document all the things you can do with `npm run`.
+This will allow you to make your pntr games in javascript, on the web. It allows a quick way to try out ideas on the web.
 
 
-### Native
+## usage
+
+```html
+<script type="module" src="https://cd.url.goes/here/pntr_app.js"></script>
+<pntr-app>
+    <script type="pntr">
+        let font
+
+        async function init () {
+          font = pntr_load_font_default()
+          return true
+        }
+
+        function update (screen) {
+          pntr_clear_background(screen, PNTR_RAYWHITE)
+          pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
+        }
+
+        function close () {
+          pntr_unload_font(font)
+        }
+
+        return {
+          init,
+          update,
+          close,
+          width: 400,
+          height: 225
+        }
+    </script>
+</pntr-app>
+```
+
+### development
+
+You don't need to do this yourself in general (output is in docs/) but here is what I do to compile it from scratch:
+
 
 ```
-cmake -B build -DSDL=true -DRAYLIB=true -DLIBRETRO=true -DCLI=true
-cmake --build build
-```
-
-### Web
-
-Use the [Emscripten SDK](https://emscripten.org/docs/tools_reference/emsdk.html) to build for the web with raylib.
-
-```
-emcmake cmake -B build -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS="-s USE_GLFW=3" -DCMAKE_EXECUTABLE_SUFFIX=".html"
+emcmake cmake -B build
 emmake make -C build
-emrun build/index.html
+cp build/pntr_app_js_wasm* docs
+
+emrun docs/index.html
 ```
+
 
 ## License
+
+Web-code & bindings made by David Konsumer (@konsumer).
 
 Unless stated otherwise, all works are:
 
