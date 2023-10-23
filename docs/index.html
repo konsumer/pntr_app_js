@@ -1,28 +1,35 @@
-<script type="module" src="./pntr_app.js"></script>
-<pntr-app>
+<head>
+  <title>pntr_app web</title>
+</head>
+<body>
+  <script type="module" src="./pntr_app.js"></script>
+  <pntr-app>
     <script type="pntr">
-        let font
+      let font
 
-        async function init () {
-          font = pntr_load_font_default()
-          return true
-        }
+      console.log({PNTR_RAYWHITE, PNTR_DARKGRAY})
 
-        function update (screen) {
-          pntr_clear_background(screen, PNTR_RAYWHITE)
-          pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
-        }
+      async function init () {
+        font = pntr_load_font_default()
+        return true
+      }
 
-        function close () {
-          pntr_unload_font(font)
-        }
+      function update (screen) {
+        pntr_clear_background(screen, PNTR_BLACK)
+        pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
+      }
 
-        return {
-          init,
-          update,
-          close,
-          width: 400,
-          height: 225
-        }
+      function close () {
+        pntr_unload_font(font)
+      }
+
+      return {
+        init,
+        update,
+        close,
+        width: 400,
+        height: 225
+      }
     </script>
-</pntr-app>
+  </pntr-app>
+</body>

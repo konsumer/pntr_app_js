@@ -42,11 +42,13 @@ You don't need to do this yourself in general (output is in docs/) but here is w
 
 
 ```
-emcmake cmake -B build
-emmake make -C build
-cp build/pntr_app_web* docs
+npm run build
+```
 
-npx -y live-server docs
+If you want to just run it locally, you can do this instead:
+
+```
+npm start
 ```
 
 
