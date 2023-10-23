@@ -1,3 +1,6 @@
 build
 *.o
 *.so
+
+.DS_Store
+node_modules
