@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "gen:api": "node tools/gen_api.mjs",
+    "gen:host": "NODE_NO_WARNINGS=1 node tools/gen_host.mjs",
     "build": "emcmake cmake -B build && emmake make -C build && cp build/pntr_app_web* docs",
     "start": "npx -y live-server docs",
     "prestart": "npm run build"
+  },
+  "devDependencies": {
+    "wabt": "^1.0.32"
   }
 }
