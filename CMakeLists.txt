@@ -10,7 +10,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CMAKE_EXE_LINKER_FLAGS "-s ASYNCIFY -s USE_GLFW=3  -O2 -s WASM=1 -sEXPORTED_FUNCTIONS=_malloc,_free,_main,_pntr_draw_text,_pntr_new_color,_pntr_load_font_default,_pntr_clear_background,_pntr_unload_font -sEXPORTED_RUNTIME_METHODS=ccall")
+set(CMAKE_EXE_LINKER_FLAGS "-s ASYNCIFY -s USE_GLFW=3  -O2 -s WASM=1 -s INVOKE_RUN=0 -sEXPORTED_FUNCTIONS=_user_set_size,_malloc,_free,_main,_pntr_draw_text,_pntr_new_color,_pntr_load_font_default,_pntr_clear_background,_pntr_unload_font -sEXPORTED_RUNTIME_METHODS=callMain,ccall")
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/.cmake")
 

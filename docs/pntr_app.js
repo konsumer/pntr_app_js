@@ -57,13 +57,21 @@ export async function run(code, canvas, iface={}) {
     }
   }
 
+  class pntr_app_event {
+    constructor(value={}, address){
+      this._size = 4
+      this._address = this.address || m._malloc(this._size)
+      for (const k of Object.keys(value)) {
+        this[k] = value[k]
+      }
+    }
+  }
+
   // these are opaque-pointers:
+  // pntr_app
   // pntr_image
   // pntr_font
   // pntr_sound
-
-  // these are not directly used:
-  // pntr_app
 
 
   // this will be auto-generated, later
@@ -75,12 +83,19 @@ export async function run(code, canvas, iface={}) {
     pntr_load_font_default: () => {
       const ret = m._malloc(20)
       m.ccall('pntr_load_font_default', 'void', ['number'], [ret])
+      console.log('pntr_load_font_default', { ret })
       return ret
     },
 
-    pntr_clear_background: (dst, color) => m.ccall('pntr_clear_background', 'void', ['number', 'number'], [dst, color._address]),
+    pntr_clear_background: (dst, color) => {
+      // console.log('pntr_clear_background', {dst, color})
+      m.ccall('pntr_clear_background', 'void', ['number', 'number'], [dst, color._address])
+    },
 
-    pntr_unload_font: (font) => m.ccall('pntr_unload_font', 'void', ['number'], [font]),
+    pntr_unload_font: (font) => {
+      console.log('pntr_unload_font', {font})
+      m.ccall('pntr_unload_font', 'void', ['number'], [font])
+    },
 
     pntr_draw_text: (dst, font, text, posX, posY, color) => m.ccall('pntr_draw_text', 'void', ['number', 'number', 'string', 'number', 'number', 'number'], [dst, font, text, posX, posY, color._address]),
 
@@ -123,44 +138,17 @@ export async function run(code, canvas, iface={}) {
     ${code}
 `
   const f = new AsyncFunction(['vars'], userCode)
-  m.user = (await f(api)) || {}
 
+
+  // TODO: fix pntr to not need global
   window.canvas = canvas
 
-  m._main()
-
-  // TODO: call main()
-
-  /*
-
-  if (user.width) {
-    canvas.width = user.width
-  }
-
-  if (user.height) {
-    canvas.height = user.height
-  }
-
-  if (user.init) {
-    const r = await user.init()
-    if (r === false) {
-      throw Error('init() returned false.')
-    }
-  }
-
-  if (user.update) {
-    const screen = m._malloc()
-    function wrappedUpdate(t) {
-      const r = user.update(screen)
-      if (r === false) {
-        throw Error('update() returned false.')
-      } else {
-        requestAnimationFrame(wrappedUpdate)
-      }
-    }
-    requestAnimationFrame(wrappedUpdate)
-  }
-  */
+  // this is kind of a lot of rigamarole to set things up.
+  // maybe just allocate a screen and use that in JS, instead of trying to do it all in c/js/c/js
+  m.pntr_app_event = pntr_app_event
+  m.user = (await f(api)) || {}
+  m._user_set_size(m.user.width, m.user.height)
+  m.callMain()
 }
 
 

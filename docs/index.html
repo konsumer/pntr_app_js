@@ -7,17 +7,20 @@
     <script type="pntr">
       let font
 
-      async function init () {
+      async function init (app) {
         font = pntr_load_font_default()
-        return true
       }
 
-      function update (screen) {
+      function update (app, screen) {
         pntr_clear_background(screen, PNTR_BLACK)
         pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
       }
 
-      function close () {
+      function event(app, event) {
+        console.log('event', event)
+      }
+
+      function close (app) {
         pntr_unload_font(font)
       }
 
@@ -25,6 +28,7 @@
         init,
         update,
         close,
+        event,
         width: 400,
         height: 225
       }

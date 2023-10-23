@@ -8,31 +8,35 @@ This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app
 ```html
 <script type="module" src="https://cd.url.goes/here/pntr_app.js"></script>
 <pntr-app>
-    <script type="pntr">
-        let font
+<script type="pntr">
+  let font
 
-        async function init () {
-          font = pntr_load_font_default()
-          return true
-        }
+  async function init (app) {
+    font = pntr_load_font_default()
+  }
 
-        function update (screen) {
-          pntr_clear_background(screen, PNTR_RAYWHITE)
-          pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
-        }
+  function update (app, screen) {
+    pntr_clear_background(screen, PNTR_BLACK)
+    pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
+  }
 
-        function close () {
-          pntr_unload_font(font)
-        }
+  function event(app, event) {
+    console.log('event', event)
+  }
 
-        return {
-          init,
-          update,
-          close,
-          width: 400,
-          height: 225
-        }
-    </script>
+  function close (app) {
+    pntr_unload_font(font)
+  }
+
+  return {
+    init,
+    update,
+    close,
+    event,
+    width: 400,
+    height: 225
+  }
+</script>
 </pntr-app>
 ```
 
