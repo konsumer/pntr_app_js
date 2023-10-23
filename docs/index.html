@@ -1,5 +1,18 @@
 <head>
   <title>pntr_app web</title>
+
+<style>
+body {
+  background: black;
+  color: white;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
 </head>
 <body>
   <script type="module" src="./pntr_app.js"></script>
@@ -18,7 +31,10 @@
       }
 
       function event(app, event) {
-        // console.log('event', event)
+        if (event.type !== 5) {
+          console.log(event.type)
+          console.log('event', event)
+        }
       }
 
       function close (app) {
