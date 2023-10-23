@@ -9,15 +9,16 @@
 
       async function init (app) {
         font = pntr_load_font_default()
+        console.log({font})
       }
 
       function update (app, screen) {
-        pntr_clear_background(screen, PNTR_BLACK)
-        pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
+        pntr_clear_background(screen, PNTR_BLUE)
+        pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_WHITE)
       }
 
       function event(app, event) {
-        console.log('event', event)
+        // console.log('event', event)
       }
 
       function close (app) {

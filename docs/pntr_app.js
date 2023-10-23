@@ -7,10 +7,11 @@ const AsyncFunction = async function () {}.constructor
 export async function run(code, canvas, iface={}) {
   const m = await pntr_wasm({ canvas })
 
+  // helper-class that looks like pntr_color, in JS
   class pntr_color {
     constructor(value={}, address){
       this._size = 4
-      this._address = this.address || m._malloc(this._size)
+      this._address = address || m._malloc(this._size)
       for (const k of Object.keys(value)) {
         this[k] = value[k]
       }
@@ -19,51 +20,91 @@ export async function run(code, canvas, iface={}) {
     get r(){
       return m.HEAPU8[this._address]
     }
+    set r(v){
+      m.HEAPU8[this._address] = v
+    }
 
     get g(){
       return m.HEAPU8[this._address + 1]
+    }
+    set g(v){
+      m.HEAPU8[this._address + 1] = v
     }
 
     get b(){
       return m.HEAPU8[this._address + 2]
     }
+    set b(v){
+      m.HEAPU8[this._address + 2] = v
+    }
 
     get a(){
       return m.HEAPU8[this._address + 3]
+    }
+    set a(v){
+      m.HEAPU8[this._address + 3] = v
     }
 
     get data(){
       return m.HEAPU32[this._address / 4]
     }
-
-    set r(v){
-      m.HEAPU8[this._address] = v
-    }
-
-    set g(v){
-      m.HEAPU8[this._address + 1] = v
-    }
-
-    set b(v){
-      m.HEAPU8[this._address + 2] = v
-    }
-
-    set a(v){
-      m.HEAPU8[this._address + 3] = v
-    }
-
     set data(v){
       m.HEAPU32[this._address / 4] = v
     }
   }
 
+  // read-only helper class for event-callback
   class pntr_app_event {
     constructor(value={}, address){
-      this._size = 4
-      this._address = this.address || m._malloc(this._size)
+      this._size = 44
+      this._address = address || m._malloc(this._size)
       for (const k of Object.keys(value)) {
         this[k] = value[k]
       }
+    }
+
+    get type() {
+      return m.HEAPU32[this._address / 4]
+    }
+
+    get key() {
+      return m.HEAPU32[(this._address + 4) / 4]
+    }
+
+    get mouseButton() {
+      return m.HEAPU32[(this._address + 4 + 4)/ 4]
+    }
+
+    get mouseX() {
+      return m.HEAP32[(this._address + 4 + 4 + 4)/ 4]
+    }
+
+    get mouseY() {
+      return m.HEAP32[(this._address + 4 + 4 + 4 + 4)/ 4]
+    }
+
+    get mouseDeltaX() {
+      return m.HEAP32[(this._address + 4 + 4 + 4 + 4 + 4)/ 4]
+    }
+
+    get mouseDeltaY() {
+      return m.HEAP32[(this._address + 4 + 4 + 4 + 4 + 4 + 4)/ 4]
+    }
+
+    get mouseWheel() {
+      return m.HEAP32[(this._address + 4 + 4 + 4 + 4 + 4 + 4 + 4)/ 4]
+    }
+
+    get gamepadButton() {
+      return m.HEAP32[(this._address + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4)/ 4]
+    }
+
+    get gamepad() {
+      return m.HEAP32[(this._address + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4)/ 4]
+    }
+
+    get fileDropped() {
+      return m.UTF8ToString(this._address + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4)
     }
   }
 
@@ -83,21 +124,29 @@ export async function run(code, canvas, iface={}) {
     pntr_load_font_default: () => {
       const ret = m._malloc(20)
       m.ccall('pntr_load_font_default', 'void', ['number'], [ret])
-      console.log('pntr_load_font_default', { ret })
       return ret
     },
 
-    pntr_clear_background: (dst, color) => {
-      // console.log('pntr_clear_background', {dst, color})
-      m.ccall('pntr_clear_background', 'void', ['number', 'number'], [dst, color._address])
-    },
+    pntr_clear_background: (dst, color) => m.ccall(
+      'pntr_clear_background',
+      'void',
+      ['number', 'number'],
+      [dst,      color._address]
+    ),
 
-    pntr_unload_font: (font) => {
-      console.log('pntr_unload_font', {font})
-      m.ccall('pntr_unload_font', 'void', ['number'], [font])
-    },
+    pntr_unload_font: (font) => m.ccall(
+      'pntr_unload_font',
+      'void',
+      ['number'],
+      [font]
+    ),
 
-    pntr_draw_text: (dst, font, text, posX, posY, color) => m.ccall('pntr_draw_text', 'void', ['number', 'number', 'string', 'number', 'number', 'number'], [dst, font, text, posX, posY, color._address]),
+    pntr_draw_text: (dst, font, text, posX, posY, color) => m.ccall(
+      'pntr_draw_text',
+      'void',
+      ['number', 'number', 'string', 'number', 'number', 'number'],
+      [dst,      font,     text,     posX,     posY,     color._address]
+    ),
 
     PNTR_LIGHTGRAY :  new pntr_color({r: 200, g: 200, b: 200, a: 255}),
     PNTR_GRAY      :  new pntr_color({r: 130, g: 130, b: 130, a: 255}),
@@ -127,7 +176,7 @@ export async function run(code, canvas, iface={}) {
     PNTR_RAYWHITE  :  new pntr_color({r: 245, g: 245, b: 245, a: 255})
   }
 
-  const api = {...pntr, ...iface}
+  const api = {...pntr, ...iface, m}
 
   // this makes scoped handles to pntr + iface
   const userCode = `
@@ -138,7 +187,6 @@ export async function run(code, canvas, iface={}) {
     ${code}
 `
   const f = new AsyncFunction(['vars'], userCode)
-
 
   // TODO: fix pntr to not need global
   window.canvas = canvas
