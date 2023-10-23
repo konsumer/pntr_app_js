@@ -108,7 +108,6 @@ export async function run(code, canvas, iface={}) {
     }
   }
 
-  // x/y
   class pntr_vector {
     constructor(value={}, address){
       this._size = 8
@@ -117,9 +116,22 @@ export async function run(code, canvas, iface={}) {
         this[k] = value[k]
       }
     }
+
+    get x(){
+      return m.HEAPU32[this._address / 4]
+    }
+    set x(v){
+      m.HEAPU32[this._address / 4] = v
+    }
+
+    get y(){
+      return m.HEAPU32[(this._address + 4) / 4]
+    }
+    set y(v){
+      m.HEAPU32[(this._address + 4) / 4] = v
+    }
   }
 
-  // x/y/width/height
   class pntr_rectangle {
     constructor(value={}, address){
       this._size = 16
@@ -127,6 +139,34 @@ export async function run(code, canvas, iface={}) {
       for (const k of Object.keys(value)) {
         this[k] = value[k]
       }
+    }
+
+    get x(){
+      return m.HEAPU32[this._address / 4]
+    }
+    set x(v){
+      m.HEAPU32[this._address / 4] = v
+    }
+
+    get y(){
+      return m.HEAPU32[(this._address + 4) / 4]
+    }
+    set y(v){
+      m.HEAPU32[(this._address + 4) / 4] = v
+    }
+
+    get width(){
+      return m.HEAPU32[(this._address + 4 + 4) / 4]
+    }
+    set width(v){
+      m.HEAPU32[(this._address + 4 + 4) / 4] = v
+    }
+
+    get height(){
+      return m.HEAPU32[(this._address + 4 + 4 + 4) / 4]
+    }
+    set height(v){
+      m.HEAPU32[(this._address + 4 + 4 + 4) / 4] = v
     }
   }
 
