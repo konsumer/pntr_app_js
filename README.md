@@ -6,7 +6,7 @@ This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app
 ## usage
 
 ```html
-<script type="module" src="https://cd.url.goes/here/pntr_app.js"></script>
+<script type="module" src="https://konsumer.js.org/pntr_app_web/pntr_app.js" ></script>
 <pntr-app>
 <script type="pntr">
   let font
