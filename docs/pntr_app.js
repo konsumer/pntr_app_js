@@ -122,11 +122,8 @@ export async function run(code, canvas, iface={}) {
 
     pntr_new_color: (r, g, b, a) => new pntr_color({r, g, b, a}),
 
-    pntr_load_font_default: () => {
-      const ret = m._malloc(20)
-      m.ccall('pntr_load_font_default', 'void', ['number'], [ret])
-      return ret
-    },
+    // pntr_load_font_default() -> i32
+    pntr_load_font_default: () => m.ccall('pntr_load_font_default', 'number', [], []),
 
     pntr_clear_background: (dst, color) => m.ccall(
       'pntr_clear_background',
