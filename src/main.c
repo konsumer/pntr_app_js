@@ -3,49 +3,49 @@
 #define PNTR_DISABLE_MATH
 #include "pntr_app.h"
 
-typedef struct AppData {
-    pntr_font* font;
-} AppData;
+int width = 500;
+int height = 500;
 
-bool Init(pntr_app* app) {
-    AppData* appData = pntr_load_memory(sizeof(AppData));
-    pntr_app_set_userdata(app, appData);
-
-    // Load the default font
-    appData->font = pntr_load_font_default();
-
+EM_ASYNC_JS(bool, Init, (pntr_app* app), {
+    console.log('init called');
+    if (Module?.user?.init) {
+        return await Module.user.init(app);
+    }
     return true;
-}
+});
 
-bool Update(pntr_app* app, pntr_image* screen) {
-    AppData* appData = (AppData*)pntr_app_userdata(app);
-
-    // Clear the background
-    pntr_clear_background(screen, PNTR_RAYWHITE);
-
-    // Draw text on the screen
-    pntr_draw_text(screen, appData->font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY);
-
+EM_JS(bool, Update, (pntr_app* app, pntr_image* screen), {
+    console.log('update called');
+    if (Module?.user?.update) {
+        return Module.user.update(app, screen);
+    }
     return true;
-}
+});
 
-void Close(pntr_app* app) {
-    AppData* appData = (AppData*)pntr_app_userdata(app);
+EM_JS(void, Event, (pntr_app* app, pntr_app_event* event), {
+    console.log('event called');
+    if (Module?.user?.event) {
+        Module.user.event(app, event);
+    }
+});
 
-    // Unload the font
-    pntr_unload_font(appData->font);
+EM_JS(void, Close, (pntr_app* app), {
+    console.log('close called');
+    if (Module?.user?.close) {
+        Module.user.close(app);
+    }
+});
 
-    pntr_unload_memory(appData);
-}
 
+// TODO: call main() in host, which will call this
 pntr_app Main(int argc, char* argv[]) {
     return (pntr_app) {
-        .width = 400,
-        .height = 225,
-        .title = "pntr_app_starter",
+        .width = width,
+        .height = height,
+        .title = "pntr_app",
         .init = Init,
         .update = Update,
-        .close = Close,
-        .fps = 60
+        .event = Event,
+        .close = Close
     };
 }

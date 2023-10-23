@@ -57,6 +57,15 @@ export async function run(code, canvas, iface={}) {
     }
   }
 
+  // these are opaque-pointers:
+  // pntr_image
+  // pntr_font
+  // pntr_sound
+
+  // these are not directly used:
+  // pntr_app
+
+
   // this will be auto-generated, later
   const pntr = {
     pntr_color,
@@ -114,7 +123,15 @@ export async function run(code, canvas, iface={}) {
     ${code}
 `
   const f = new AsyncFunction(['vars'], userCode)
-  const user = (await f(api)) || {}
+  m.user = (await f(api)) || {}
+
+  window.canvas = canvas
+
+  m._main()
+
+  // TODO: call main()
+
+  /*
 
   if (user.width) {
     canvas.width = user.width
@@ -132,16 +149,18 @@ export async function run(code, canvas, iface={}) {
   }
 
   if (user.update) {
+    const screen = m._malloc()
     function wrappedUpdate(t) {
-      const r = user.update()
+      const r = user.update(screen)
       if (r === false) {
-        throw Error('init() returned false.')
+        throw Error('update() returned false.')
       } else {
         requestAnimationFrame(wrappedUpdate)
       }
     }
     requestAnimationFrame(wrappedUpdate)
   }
+  */
 }
 
 
