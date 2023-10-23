@@ -11,19 +11,23 @@ This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app
 <script type="pntr">
   let font
 
+  // called when it first starts
   async function init (app) {
     font = pntr_load_font_default()
   }
 
+  // called on each frame
   function update (app, screen) {
     pntr_clear_background(screen, PNTR_BLACK)
     pntr_draw_text(screen, font, "Congrats! You created your first pntr_app!", 35, 100, PNTR_DARKGRAY)
   }
 
+  // called on input/file-drop events
   function event(app, event) {
     console.log('event', event)
   }
 
+  // called on exit (which never really happens in a practical sense)
   function close (app) {
     pntr_unload_font(font)
   }
@@ -39,6 +43,8 @@ This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app
 </script>
 </pntr-app>
 ```
+
+All of these callbacks are optional.
 
 ### development
 
