@@ -1,6 +1,8 @@
 # pntr_app_web
 
-This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app) games in javascript, on the web. It allows a quick way to try out ideas, and you can easily port your game to C later, if you want (for native + web.)
+This will allow you to make your [pntr_app](https://github.com/RobLoach/pntr_app) games in javascript, on the web. THis way, you can try out & share ideas quickly, and you can easily port your game to C later, if you want (for native + web.)
+
+[Here](https://codepen.io/konsumer/pen/WNPNVYg?editors=1100) is a codepen-template you can use.
 
 
 ## usage
