@@ -1,4 +1,4 @@
-// this will output all the signatures of wasm file
+// this will output all the import/export function signatures of wasm file
 
 import { readFile } from 'fs/promises'
 import w from 'wabt'
@@ -17,33 +17,58 @@ if (!WASM_FILE) {
 const wasmBytes = await readFile(WASM_FILE)
 
 const mod = wabt.readWasm(wasmBytes, { readDebugNames: true })
-const wast = mod.toText({})
+mod.applyNames();
 
-const wm = await WebAssembly.compile(wasmBytes)
+function printFunctionsFromWast (wast) {
+  // first find all signatures
+  let r = /  \(type \(;([0-9]+);\) \(func(.+)?\)\)/gm
+  let m
+  const signatures = {}
+  while ((m = r.exec(wast)) !== null) {
+      if (m.index === r.lastIndex) {
+          r.lastIndex++;
+      }
 
-// build initial fake imports
-const e = WebAssembly.Module.exports(wm)
+      if (m[2]) {
+        let params = /\(param (((i32|i64|f32|f64) ?)+)\)/g.exec(m[2])
+        let result = /\(result ((i32|i64|f32|f64))\)/g.exec(m[2])
 
-const stub = {}
-for (const i of WebAssembly.Module.imports(wm)) {
-    if (i.kind === 'function'){
-        stub[i.module] ||= {}
-        stub[i.module][i.name] = () => {}
+        if (params) {
+          params = params[1].split(' ')
+        }else {
+          params = []
+        }
+
+        if (result) {
+          result = result[1]
+        }
+
+        signatures[ m[1] ] = [params, result]
+      } else {
+        signatures[ m[1] ] = [[], null]
+      }
+  }
+
+  console.log('IMPORTS')
+  r=/\(import "(.+)" "(.+)" \(func \$(.+) \(type ([0-9]+)\)\)\)/gm
+  while ((m = r.exec(wast)) !== null) {
+    if (m.index === r.lastIndex) {
+      r.lastIndex++;
     }
+    const s = signatures[ m[4] ]
+    console.log(`  ${m[1]}.${m[2]}(${s[0].join(', ')}) => ${s[1]}`)
+  }
+  
+  console.log('EXPORTS')
+  r=/\(export "(.+)" \(func \$(.+)\)\)/gm
+  while ((m = r.exec(wast)) !== null) {
+    if (m.index === r.lastIndex) {
+      r.lastIndex++;
+    }
+    const f = (new RegExp(`func \\$${m[2]} \\(type ([0-9]+)\\)`)).exec(wast)
+    const s = signatures[ f[1] ]
+    console.log(`  ${m[1]}(${s[0].join(', ')}) => ${s[1]}`)
+  }
 }
 
-const instance = await WebAssembly.instantiate(wm, stub)
-
-for (const f of Object.keys(instance.exports)) {
-    if (instance.exports[f].name) {
-        const sig = (new RegExp(`  \\(func \\(;${instance.exports[f].name};\\) (.+)`)).exec(wast)
-        const info = sig[1].split('(').filter(s => !!s.trim()).map(s => s.replace(')', '') ).reduce((a, c) => {
-            let [n,...i] = c.trim().split(' ')
-            if (n !== 'param') {
-                i = i[0]
-            }
-            return {...a, [n]: i}
-        }, {})
-        console.log(`${f}(${(info.param||[]).join(', ')}) => ${info.result || 'void'}`)
-    }
-}
+printFunctionsFromWast(mod.toText({}))
